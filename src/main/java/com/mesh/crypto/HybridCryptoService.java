@@ -59,37 +59,6 @@ public class HybridCryptoService {
      * Encrypt a payment instruction with the server's public key.
      * Called by the simulated sender device.
      */
-    public String encrypt(PaymentInstruction instruction, PublicKey serverPublicKey) throws Exception {
-        byte[] plaintext = json.writeValueAsBytes(instruction);
-
-        // 1. Generate a one-time AES key for this packet.
-        KeyGenerator kg = KeyGenerator.getInstance("AES");
-        kg.init(AES_KEY_BITS);
-        SecretKey aesKey = kg.generateKey();
-
-        // 2. AES-GCM encrypt the payload.
-        byte[] iv = new byte[GCM_IV_BYTES];
-        rng.nextBytes(iv);
-        Cipher aes = Cipher.getInstance(AES_TRANSFORMATION);
-        aes.init(Cipher.ENCRYPT_MODE, aesKey, new GCMParameterSpec(GCM_TAG_BITS, iv));
-        byte[] aesCiphertext = aes.doFinal(plaintext);
-
-        // 3. RSA-OAEP encrypt the AES key with the server's public key.
-        Cipher rsa = Cipher.getInstance(RSA_TRANSFORMATION);
-        OAEPParameterSpec oaep = new OAEPParameterSpec(
-                "SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT);
-        rsa.init(Cipher.ENCRYPT_MODE, serverPublicKey, oaep);
-        byte[] encryptedAesKey = rsa.doFinal(aesKey.getEncoded());
-
-        // 4. Pack: [encrypted AES key][IV][AES ciphertext + tag]
-        ByteBuffer buf = ByteBuffer.allocate(encryptedAesKey.length + iv.length + aesCiphertext.length);
-        buf.put(encryptedAesKey);
-        buf.put(iv);
-        buf.put(aesCiphertext);
-
-        return Base64.getEncoder().encodeToString(buf.array());
-    }
-
     /**
      * Decrypt with the server's private key.
      * If anything has been tampered with — wrong key, modified ciphertext,
