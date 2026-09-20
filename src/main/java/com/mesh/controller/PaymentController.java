@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.mesh.dto.CreatePaymentRequest;
-import com.mesh.dto.MeshPacket;
 import com.mesh.dto.ProcessPaymentRequest;
-import com.mesh.service.MeshPacketService;
 import com.mesh.service.SettlementService;
 
 import java.util.Base64;
@@ -17,22 +14,10 @@ import java.util.Base64;
 @RequestMapping("/api/payments")
 public class PaymentController {
 
-    @Autowired
-    private MeshPacketService meshPacketService;
     
     @Autowired
     private SettlementService settlementService;
 
-    @PostMapping("/create")
-    public MeshPacket createPayment(
-            @RequestBody CreatePaymentRequest request) throws Exception {
-
-        return meshPacketService.createPacket(
-                request.getSenderVpa(),
-                request.getReceiverVpa(),
-                request.getAmount()
-        );
-    }
     
     @PostMapping("/process")
     public ResponseEntity<String> processPayment(
