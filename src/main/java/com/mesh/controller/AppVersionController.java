@@ -16,7 +16,7 @@ public class AppVersionController {
         return ResponseEntity.ok(Map.of(
                 "latestVersionCode", 2,
                 "latestVersionName", "1.1.0",
-                "downloadUrl", "https://github.com/Swapnil12-dev/MeshPay_Frontend/releases/download/v1.1.0/app-debug.apk", // Or Google Drive/GitHub link
+                "downloadUrl", "https://github.com/Swapnil12-dev/MeshPay_Frontend/releases/download/v1.1.0/MeshPay.apk", // Or Google Drive/GitHub link
                 "forceUpdate", false
         ));
     }
